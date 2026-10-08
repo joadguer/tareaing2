@@ -1,4 +1,6 @@
 # Reviewed under SE2 coding standards guidelines
+"""Student Grade Management System."""
+
 MIN_GRADE = 0
 MAX_GRADE = 100
 PASSING_GRADE = 60
@@ -9,8 +11,10 @@ SEPARATOR = "-" * 40
 
 
 class Student:
+    """A student with an ID, a name and a list of numeric grades."""
 
     def __init__(self, student_id, name):
+        """Create a student, rejecting an empty ID or name."""
         if not student_id or not student_id.strip():
             raise ValueError("Student ID cannot be empty.")
         if not name or not name.strip():
@@ -20,6 +24,7 @@ class Student:
         self.grades = []
 
     def add_grade(self, grade):
+        """Add a numeric grade between MIN_GRADE and MAX_GRADE."""
         if isinstance(grade, bool) or not isinstance(grade, (int, float)):
             raise TypeError(f"Grade must be a number, got {grade!r}.")
         if not MIN_GRADE <= grade <= MAX_GRADE:
@@ -30,11 +35,13 @@ class Student:
         self.grades.append(float(grade))
 
     def calculate_average(self):
+        """Return the average grade, or 0.0 if there are no grades."""
         if not self.grades:
             return 0.0
         return sum(self.grades) / len(self.grades)
 
     def get_letter_grade(self):
+        """Return the letter grade (A-F) for the current average."""
         average = self.calculate_average()
         for minimum, letter in LETTER_GRADES:
             if average >= minimum:
@@ -42,12 +49,15 @@ class Student:
         return FAILING_LETTER
 
     def has_passed(self):
+        """Return True if the average is at least PASSING_GRADE."""
         return self.calculate_average() >= PASSING_GRADE
 
     def is_on_honor_roll(self):
+        """Return True if the average is at least HONOR_ROLL_GRADE."""
         return self.calculate_average() >= HONOR_ROLL_GRADE
 
     def remove_grade_by_index(self, index):
+        """Remove and return the grade at the given zero-based index."""
         if not 0 <= index < len(self.grades):
             raise IndexError(
                 f"Grade index {index} is out of range "
@@ -56,6 +66,7 @@ class Student:
         return self.grades.pop(index)
 
     def remove_grade_by_value(self, value):
+        """Remove the first grade equal to value and return it."""
         try:
             self.grades.remove(float(value))
         except ValueError as error:
@@ -65,6 +76,7 @@ class Student:
         return float(value)
 
     def get_summary_report(self):
+        """Return a formatted summary report for the student."""
         status = "Passed" if self.has_passed() else "Failed"
         return "\n".join([
             SEPARATOR,
@@ -80,6 +92,7 @@ class Student:
 
 
 def create_student(student_id, name):
+    """Create a student, or print the error and return None."""
     try:
         return Student(student_id, name)
     except ValueError as error:
@@ -88,6 +101,7 @@ def create_student(student_id, name):
 
 
 def add_grades(student, grades):
+    """Add several grades, printing an error for each invalid one."""
     for grade in grades:
         try:
             student.add_grade(grade)
@@ -96,6 +110,7 @@ def add_grades(student, grades):
 
 
 def remove_grade(student, index=None, value=None):
+    """Remove a grade by index or by value and report the result."""
     try:
         if index is not None:
             removed = student.remove_grade_by_index(index)
@@ -107,6 +122,7 @@ def remove_grade(student, index=None, value=None):
 
 
 def main():
+    """Demonstrate all the functional requirements."""
     print("== Invalid students ==")
     create_student("", "Ana Torres")
     create_student("S000", "   ")
